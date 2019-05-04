@@ -59,7 +59,7 @@
       const port = location.port;
 
       let wsUrl = 'ws://';
-      if (protocol === 'https') {
+      if (protocol === 'https:') {
         wsUrl = 'wss://';
       }
       wsUrl = wsUrl + hostname + ':' + port;
