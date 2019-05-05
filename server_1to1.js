@@ -1,7 +1,7 @@
 //
 // webrtc 1to1 sample
-//   https://github.com/mganeko/mediasoup_sample_v2
-//   mediasoup_sample_v2 is provided under MIT license
+//   https://github.com/mganeko/webrtc_1to1
+//   webrtc_1to1 is provided under MIT license
 //
 //
 
