@@ -11,6 +11,10 @@
   ],
   "author": "mganeko",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mganeko/webrtc_1to1.git"
+  },
   "dependencies": {
     "express": "^4.16.4",
     "ws": "^7.0.0"
