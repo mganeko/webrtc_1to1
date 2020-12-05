@@ -122,30 +122,33 @@ function getIpv4Address() {
 
 function selectIpAddress(ips) {
   let ipAddr = '127.0.0.1';
-  let curretnPrefix = '127'
+  let currentPrefix = '127'
 
   ips.forEach(ip => {
     const prefix = ip.address.split('.')[0];
     if (prefix === '10') {
-      if (curretnPrefix === '127') {
+      if (currentPrefix === '127') {
         console.log('use class A');
         ipAddr = ip.address;
+        currentPrefix = ('10');
       }
     }
     else if (prefix === '172') {
-      if ((curretnPrefix === '127') || (curretnPrefix === '10')) {
+      if ((currentPrefix === '127') || (currentPrefix === '10')) {
         console.log('use class B');
         ipAddr = ip.address;
+        currentPrefix = '172';
       }
     }
     else if (prefix === '192') {
-      if ((curretnPrefix === '172') || (curretnPrefix === '127') || (curretnPrefix === '10')) {
+      if ((currentPrefix === '172') || (currentPrefix === '127') || (currentPrefix === '10')) {
         console.log('use class C');
         ipAddr = ip.address;
+        currentPrefix = '192';
       }
     }
     else {
-      if (curretnPrefix === '127') {
+      if (currentPrefix === '127') {
         console.log('use global address');
         ipAddr = ip.address;
       }
