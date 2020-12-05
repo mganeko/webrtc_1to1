@@ -37,15 +37,33 @@ app.use(express.static('public'));
 let webServer = null;
 const hostName = 'localhost';
 
+// --- get IPv4 address --
+const ipv4s = getIpv4Address();
+console.log('IPv4 address:', ipv4s);
+
 // --- http ---
 webServer = http.Server(app).listen(port, function () {
-  console.log('Web server start. http://' + hostName + ':' + webServer.address().port + '/');
+  const address = webServer.address();
+  if (address) {
+    console.log('Web server start. http://' + hostName + ':' + address.port + '/');
+  }
+  else {
+    console.error('WebServer Start ERROR');
+  }
 });
 
 
 // --- websocket signaling ---
 const wsServer = new WebSocketServer({ server: webServer });
-console.log('websocket server start. port=' + webServer.address().port);
+const address = webServer.address();
+if (address) {
+  console.log('websocket server start. port=' + address.port);
+}
+else {
+  console.error('websocket Start ERROR with port=' + port);
+}
+//console.log('websocket server start. port=' + port);
+
 
 wsServer.on('connection', function (ws) {
   console.log('-- websocket connected --');
@@ -67,4 +85,22 @@ function isSame(ws1, ws2) {
 
   // -- compare undocumented id --
   //return (ws1._ultron.id === ws2._ultron.id);
+}
+
+function getIpv4Address() {
+  const os = require('os');
+  const interfaces = os.networkInterfaces();
+  //console.log(interfaces);
+
+  const ipv4s = [];
+  for (let device in interfaces) {
+    const network = interfaces[device];
+    network.forEach(info => {
+      if (info.family === 'IPv4') {
+        ipv4s.push({ device: device, address: info.address });
+      }
+    })
+  }
+
+  return ipv4s;
 }
