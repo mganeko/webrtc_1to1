@@ -5,7 +5,8 @@
   "main": "server_1to1.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server_1to1.js"
+    "start": "node server_1to1.js",
+    "with-mdns": "node server_1to1_mdns.js"
   },
   "keywords": [
     "webrtc"
@@ -18,6 +19,7 @@
   },
   "dependencies": {
     "express": "^4.16.4",
+    "multicast-dns": "^7.2.2",
     "ws": "^7.0.0"
   }
 }
