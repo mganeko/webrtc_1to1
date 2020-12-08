@@ -39,13 +39,27 @@ const hostName = 'localhost';
 
 // --- http ---
 webServer = http.Server(app).listen(port, function () {
-  console.log('Web server start. http://' + hostName + ':' + webServer.address().port + '/');
+  const address = webServer.address();
+  if (address) {
+    console.log('Web server start. http://' + hostName + ':' + address.port + '/');
+  }
+  else {
+    console.error('WebServer Start ERROR');
+  }
 });
 
 
 // --- websocket signaling ---
 const wsServer = new WebSocketServer({ server: webServer });
-console.log('websocket server start. port=' + webServer.address().port);
+const address = webServer.address();
+if (address) {
+  console.log('websocket server start. port=' + address.port);
+}
+else {
+  console.error('websocket Start ERROR with port=' + port);
+}
+//console.log('websocket server start. port=' + port);
+
 
 wsServer.on('connection', function (ws) {
   console.log('-- websocket connected --');

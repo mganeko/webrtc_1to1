@@ -5,21 +5,22 @@
   <meta charset="UTF-8">
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>WebRTC ws-signaling 2020</title>
+  <title>WebRTC ws-signaling 2019</title>
 </head>
 
 <body>
-  WebRTC ws-signaling 2020<br />
+  WebRTC ws-signaling 2020 sub<br />
   <input type="checkbox" id="use_audio_check">use Audio</input>
   <button type="button" onclick="startVideo();">Start Video</button>
   <button type="button" onclick="stopVideo();">Stop Video</button>
-  &nbsp;
+  &nbsp;<br />
+  <input type="text" id="signaling_url_text" length="32" placeholder="ws://127.0.0.1:8080"></input>
   <button type="button" onclick="connect();">Connect</button>
   <button type="button" onclick="hangUp();">Hang Up</button>
   <div>
     <video id="local_video" autoplay playsinline muted
       style="width: 160px; height: 120px; border: 1px solid black;"></video>
-    <video id="remote_video" autoplay laysinline muted
+    <video id="remote_video" autoplay playsinline muted
       style="width: 160px; height: 120px; border: 1px solid black;"></video>
   </div>
   <p>SDP to send:<br />
@@ -45,12 +46,9 @@
     import * as signaling from './js/ws_signaling_module.js';
     signaling.setRceiveSdpHandeler(receiveSdp);
     signaling.setReceiveIceCandidateHandeler(receiveIceCandidate);
-    signaling.setCloseHander(connectionClose);
+    //signaling.setCloseHander(connectionClose);
+    signaling.setCloseHander(handleRemoteClose);
     //signaling.connectSignaling(getWebsocketUrl());
-    signaling.connectSignalingAsync(getWebsocketUrl())
-      .then(() => {
-        console.log('signaling websocket open');
-      });
 
     import * as media from './js/media_module.js';
 
@@ -62,6 +60,11 @@
     let localStream = null;
 
     function getWebsocketUrl() {
+      const inputUrl = document.getElementById('signaling_url_text').value;
+      if (inputUrl && (signaling_url_text !== '')) {
+        return inputUrl;
+      }
+
       const protocol = location.protocol;
       const hostname = location.hostname;
       const port = location.port;
@@ -97,6 +100,12 @@
     window.stopVideo = stopVideo;
 
     async function connect() {
+      // signaling.connectSignaling(getWebsocketUrl());
+      // console.log('before sleep')
+      // await sleep(3);
+      // console.log('after sleep')
+      await signaling.connectSignalingAsync(getWebsocketUrl());
+
       let offer = await webrtc.startOfferAsync(localStream).catch(err => {
         console.error('startOfferAsync() error:', err);
         return;
@@ -110,12 +119,22 @@
     function hangUp() {
       connectionClose();
       signaling.sendClose();
+
+      // DO NOT close signaling
+      // signaling.disconnectSignaling();
     }
     window.hangUp = hangUp;
 
     function cleanUp() {
       cleanupVideoElement(remoteVideo);
       textForSendSdp.value = '';
+    }
+
+    function handleRemoteClose() {
+      connectionClose();
+
+      // DO NOT close signaling
+      // signaling.disconnectSignaling();
     }
 
     function connectionClose() {
@@ -202,6 +221,10 @@
 
     function receiveIceCandidate(candidate) {
       webrtc.addIceCandidate(candidate);
+    }
+
+    function sleep(sec) {
+      return new Promise(resolve => setTimeout(resolve, sec * 1000));
     }
   </script>
 
